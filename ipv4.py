@@ -1,9 +1,8 @@
 #### FIVE FUNCTIONS TO HELP DESIGN IP SUBNETS 
-#### Y. Rooseleer, BIASC
 ##   IPv4 subnet masks, prefixes, number of addressess, number of hosts
 ##   Converting subnet mask into prefix notation
-##   Getting numer of hosts for a specific prefix
-##   Data based solution, without calc => learning dict and json
+##   Getting number of hosts for a specific prefix
+##   Data driven solution, without calc => learning dict and json
 #### USE UNITTEST TO CHECK THE CORRECTNESS OF THE FIVE FUNCTIONS
 
 netmask_prefixes = {
@@ -98,12 +97,14 @@ def get_net_prefix(p_subnet_mask):
         return "Wrong input: garbage in, garbage out"
 
 def get_number_ip_addresses(p_prefix):
+    #### example /30 => 30
     pbits = 32-int(p_prefix[1:])
     return 2 ** pbits
 
 def get_number_ip_hosts(p_prefix):
-    pbits = 32-int(p_prefix[1:])
-    return (2 ** pbits)-2
+    #pbits = 32-int(p_prefix[1:])
+    return get_number_ip_addresses(p_prefix)-2
+    #return (2 ** pbits)-2
 
 def get_netmask(p_prefix):
     try:
@@ -111,7 +112,6 @@ def get_netmask(p_prefix):
         return net_mask
     except:
         return "Wrong input: garbage in, garbage out"
-
 
 def get_network_bits(p_subnet_mask):
     try:
@@ -129,8 +129,9 @@ if __name__ == "__main__":
     net_mask = get_netmask(net_prefix)
     net_bits = get_network_bits(net_mask)
     print(net_bits)
-    net_number_addr =  get_number_ip_addresses('/24')
-    net_number_ip_hosts =  get_number_ip_hosts('/24')
+    net_number_addr =  get_number_ip_addresses(net_prefix)
+    net_number_ip_hosts =  get_number_ip_hosts(net_prefix)
     print(net_number_addr)
     print(net_number_ip_hosts)
+    #print(type(prefix_netmasks))
 
