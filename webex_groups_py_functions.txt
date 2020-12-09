@@ -1,0 +1,72 @@
+### SAME AS PREVIOUS CELL => NO DEBUGGING, NO PRINT STATEMENTS + ADDED FUNCTIONS
+### LIMITED OUTPUT
+### 2B #### FUNCTIONS TO CREATE (A) GROUPS AND (B) GROUP MEMBERSHIPS
+### Using an excel file as input for a Python script
+###
+import xlrd
+import json
+###
+### REWRITING RULES
+### member_dict  =>  {"person_name": "x", "email": "y", "group":"z"}
+### member_list  =>  [member_dict]
+### group_dict   =>  {group_name, member_list} | {group_name, [member_dict]} 
+### group_list   =>  [group_dict]
+### groups_struc =>  {group_list} | {[group_dict]}
+###
+### RULES
+member_dict            = { "person_name": "x", "email": "y", "group":"z" }
+member_list            = [] ### [member_dict]
+group_dict             = {} ### {"group": {group_name": "G" , "members": member_list} }                             
+group_list             = [] ### [group_dict] 
+groups_struc           = {} 
+groups_struc['groups'] = [] ### [group_dict]
+###
+### FUNCTION TO COLLECT A LIST OF PERSONS (= TABLE OF MEMBERS)
+def find_all_persons_and_groups(xlf):
+    ### READ EXCEL FILE AND RETURN NUMBER OF ROWS
+    wb = xlrd.open_workbook(xlf)
+    sheet = wb.sheet_by_index(0)
+    number_rows = sheet.nrows
+    loc_member_list = []
+    for r in range(number_rows):
+        if r > 0: ### first row contains columns names
+            COL_A =  sheet.cell_value(r, 0)  #### column A
+            COL_B =  sheet.cell_value(r, 1)  #### column B
+            COL_C =  sheet.cell_value(r, 2)  #### column C
+            member_dict["group"] = COL_A
+            member_dict["person_name"]  = COL_B 
+            member_dict["email"] = COL_C
+            loc_member_list.append(member_dict.copy())     
+    return loc_member_list
+
+### FUNCTION TO CREATE A LIST OF GROUPS
+def make_list_of_groups(loc_dict):    
+    loc_g = []
+    mem = None
+    for rec in loc_dict:
+        g = rec["group"]
+        if mem != g:
+            loc_g.append(g)
+        mem = g
+    return loc_g
+
+### FUNCTION TO CREATE A LIST OF GROUP MEMBERS
+def attach_members_to_groups(loc_group, loc_members):        
+    loc_m_dict = {}
+    loc_m_list = [loc_m_dict]
+    for membr in loc_members:
+        if membr["group"] == loc_group:
+            if membr["person_name"] != None:
+                loc_m_dict["person_name"]  = membr["person_name"]
+                loc_m_dict["email"] = membr["email"]
+                loc_m_list.append(loc_m_dict.copy())
+    return loc_m_list
+        
+#### MAIN ####
+def main():
+    #### write this part yourself ####
+    
+#### execute main() when called directly        
+if __name__ == '__main__':
+    main()
+    
