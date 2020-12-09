@@ -1,0 +1,72 @@
+YANG MODEL INTERFACES
+URL: https://github.com/YangModels/yang/blob/master/standard/ietf/RFC/ietf-interfaces%402018-02-20.yang 
+
+module: ietf-interfaces => sysnet-interfaces
+  container: interfaces
+    list: interface
+    - key: name
+        leaf: name   "gigabitethernet"
+        leaf: description "link with server" (connected to)
+	    leaf: type   "ethernet"
+        leaf: enabled 
+		leaf: admin-status
+		leaf: oper-status
+		leaf: last-change (datetime)
+		leaf: if-index "1" 
+		leaf: phys-address (mac-address)
+		leaf: speed        (bits/sec)
+		leaf-list: logical address (ip addres: ipv4 SM | ipv6/64 )
+
+ 
+submodule Cisco-IOS-XE-interfaces 
+    grouping ethernet-grouping
+	    leaf: Ethernet IEEE 802.3
+        leaf: FastEthernet IEEE 802.3
+		leaf: GigabitEthernet IEEE 802.3z
+		leaf: Port-channel
+		leaf: TenGigabitEthernet  
+		leaf: TwentyFiveGigabitEthernet 
+		leaf: FortyGigabitEthernet 
+		leaf: TwoGigabitEthernet 
+		leaf: HundredGigE 
+		leaf: Vlan (range 1..4096)
+	
+	container encapsulation
+	    container dot1Q 801.1Q
+    
+	container: ip
+		container: access-group
+        container: address
+		    container: primary
+			     leaf: address
+				 leaf: mask	
+	grouping interface-switchport-grouping
+	    container access
+		    leaf: vlan (range 1..4096)
+		container trunk
+            container: allowed
+			     leaf: vlan
+		container native
+			leaf: vlan
+		container 12pt-choose-grouping
+		    leaf: lldp
+			container: point-to-point
+			     leaf: lacp
+				 leaf: pagp
+				 leaf: udld
+				 
+	grouping interface-common-grouping
+        container switchport-conf
+		    leaf: switchport
+			leaf: mac-address
+			leaf: shutdown
+			leaf: cdp
+			leaf: stp
+			leaf: vtp
+		
+
+
+		
+			
+		
+
