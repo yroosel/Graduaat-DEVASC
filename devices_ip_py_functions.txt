@@ -1,17 +1,26 @@
+### This script creates a JSON structure based on information an excel spreadsheet
+### You have to understand Python dict and Python lists
+### Contact yvan.rooseleer@biasc.be if you have questions
+### It's up to you to ### WRITE YOUR OWN CODE ### where this is indicated
+### Validate your JSON structure
+### Use print statements to understand return values and return types
+### There is a simplified solution (main2) and a more difficult solution (main)
+###
 import xlrd
 import json
-###
+### In order to complete the task is is necessary to study the "rules" below 
 ### RULES
-inventory_list         = []    
 inventory_dict         = {}  #### {"interface": "gi0/1", "ip_address": "1.2.2.1", "subnet_mask": "255.255.255.0", "device": "dv"
+inventory_list         = []  #### [inventory_dict]  
 interface_dict         = {}  #### {"interface": "gi0/1", "ip_address": "1.2.2.1", "subnet_mask": "255.255.255.0"}
-dev_dict               = {}  #### {"device": {dev_name": "n", "role": "r", interfaces": interface_dict}}
+interface_list         = []  #### [interface_dict]    
+dev_dict               = {}  #### {"device": {dev_name": "n", "role": "r", interfaces": interface_list}}
 dev_list               = []  #### [dev_dict]  
 rack_struc             = {}  #### {dev_dict_list}
 rack_struc["rack"]     = []
 ###
-
-def find_all_device_interfaces(xlf):
+### Writing functions simplifies coding
+def find_all_device_interfaces(xlf):  
     ### READ EXCEL FILE AND RETURN NUMBER OF ROWS
     wb = xlrd.open_workbook(xlf)
     sheet = wb.sheet_by_index(0)
@@ -23,7 +32,7 @@ def find_all_device_interfaces(xlf):
             COL_B =  sheet.cell_value(r, 1)  #### column B
             COL_C =  sheet.cell_value(r, 2)  #### column C
             COL_D =  sheet.cell_value(r, 3)  #### column D
-            COL_E =  sheet.cell_value(r, 3)  #### column E
+            COL_E =  sheet.cell_value(r, 4)  #### column E
             inventory_dict["device"]      = COL_A
             inventory_dict["role"]        = COL_B
             inventory_dict["interface"]   = COL_C 
@@ -32,7 +41,7 @@ def find_all_device_interfaces(xlf):
             loc_interfaces.append(inventory_dict.copy()) # need to use copy()
     return loc_interfaces
 
-def make_list_of_devices_and_roles(loc_list):  
+def make_list_of_devices_and_roles(loc_list):  ### used by main()
     loc_g = []
     mem   = {}
     g     = {}
@@ -42,12 +51,10 @@ def make_list_of_devices_and_roles(loc_list):
         if mem != g["dev_name"]:
             loc_g.append(g.copy())  # need to use copy()
         mem = g["dev_name"]
-    #for rec in loc_g:    
-        #print(rec)
-    #del loc_g[0]
+    #del loc_g[0] ### if last item copied as first item
     return loc_g
 
-def make_list_of_devices(loc_list): 
+def make_list_of_devices(loc_list):  ### used by main2()
     loc_g = []
     mem = None
     for rec in loc_list:
@@ -67,6 +74,7 @@ def attach_interfaces_to_devices(loc_device, loc_inventory):
                 loc_dev_dict["ipaddress"]   = item["ipaddress"]
                 loc_dev_dict["subnetmask"]  = item["subnetmask"]
                 loc_list.append(loc_dev_dict.copy()) # need to use copy()
+    del loc_list[0] ### if last item copied as first item
     return loc_list
         
 #### MAIN ####   
@@ -75,21 +83,19 @@ def main2(): ### no role for devices, only device name
     dev_list       = make_list_of_devices(inventory_list)  
     for device_rec in dev_list:
         intf_list = attach_interfaces_to_devices(device_rec, inventory_list)
-        del intf_list[0] #### delete the first element, which is a copy of the last element
         dev_dict["device"] = { "device": {"dev_name": device_rec , "interfaces": intf_list }} 
         rack_struc["rack"].append(dev_dict["device"])
     js_rack = json.dumps(rack_struc)
 
-def main(): ### role added 
+def main(): ### role added for devices
     inventory_list = ### WRITE YOUR OWN CODE ###
     dev_list       = ### WRITE YOUR OWN CODE ###
     for device_rec in dev_list:
         intf_list = ### WRITE YOUR OWN CODE ###
-        del intf_list[0] #### delete the first element, which is a copy of the last element
         dev_dict["device"] = ### WRITE YOUR OWN CODE ###
         rack_struc["rack"].append(dev_dict["device"])
     js_rack = json.dumps(rack_struc)
 
 #### execute main() when called directly        
 if __name__ == '__main__':
-    main()
+    main() ### alternatively: main2()
